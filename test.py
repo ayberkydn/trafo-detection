@@ -16,17 +16,12 @@ import detectron2
 from detectron2.utils.logger import setup_logger
 setup_logger()
 
+dataset_path = os.path.join(os.environ['DATA_PATH'], 'trafo_img',
+                            'kendi_topladiklarimiz')
 
-dataset_path = os.path.join(
-    os.environ['DATA_PATH'], 'trafo_img', 'kendi_topladiklarimiz')
+DatasetCatalog.register("trafo_train", lambda: dataset_fn(dataset_path))
 
-DatasetCatalog.register(
-    "trafo_train", lambda: dataset_fn(dataset_path)
-)
-
-DatasetCatalog.register(
-    "trafo_test", lambda: dataset_fn(dataset_path)
-)
+DatasetCatalog.register("trafo_test", lambda: dataset_fn(dataset_path))
 MetadataCatalog.get('trafo_train').set(thing_classes=['trafo'])
 MetadataCatalog.get('trafo_test').set(thing_classes=['trafo'])
 
@@ -40,7 +35,6 @@ cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.8
 predictor = DefaultPredictor(cfg)
 
-
 save_path = "./sonuc_fotolar"
 os.makedirs(save_path, exist_ok=True)
 
@@ -49,16 +43,15 @@ for n, d in enumerate(DatasetCatalog.get('trafo_test')):
     im = cv2.imread(d["file_name"])
     # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
     outputs = predictor(im)
-    v = Visualizer(im, scale=0.5)
-    out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    cv2.imwrite(os.path.join(save_path, str(n) + '.jpg'), out.get_image())
+v = Visualizer(im, scale=0.5)
+out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+cv2.imwrite(os.path.join(save_path, str(n) + '.jpg'), out.get_image())
 
-evaluator = COCOEvaluator(
-    "trafo_test",
-    cfg,
-    distributed=False,
-    output_dir="./output/"
-)
+cv2
+evaluator = COCOEvaluator("trafo_test",
+                          cfg,
+                          distributed=False,
+                          output_dir="./output/")
 
 test_loader = build_detection_test_loader(cfg, "trafo_test")
 inference_on_dataset(predictor.model, test_loader, evaluator)
