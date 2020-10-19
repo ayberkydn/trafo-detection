@@ -5,7 +5,6 @@ from detectron2.engine import DefaultTrainer
 import random
 import cv2
 import json
-from detectron2.data import DatasetCatalog
 import os
 from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.utils.visualizer import Visualizer
@@ -24,20 +23,17 @@ cfg.merge_from_file(
     model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")
 )
 
+train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
+test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
 
-dataset_path = os.path.join(
-    os.environ["DATA_PATH"], "trafo_img", "kendi_topladiklarimiz"
-)
+DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
+DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
 
-
-DatasetCatalog.register("trafo_train", lambda: dataset_fn(dataset_path))
-
-DatasetCatalog.register("trafo_test", lambda: dataset_fn(dataset_path))
 MetadataCatalog.get("trafo_train").set(thing_classes=["trafo"])
 MetadataCatalog.get("trafo_test").set(thing_classes=["trafo"])
 
 cfg.DATASETS.TRAIN = ("trafo_train",)
-cfg.DATASETS.TEST = ()
+cfg.DATASETS.TEST = ("trafo_test",)
 
 
 try:
@@ -59,7 +55,7 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
 cfg.DATALOADER.NUM_WORKERS = 2
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-cfg.SOLVER.MAX_ITER = 500000
+cfg.SOLVER.MAX_ITER = 10000
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
 
