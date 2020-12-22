@@ -21,16 +21,17 @@ setup_logger()
 cfg = get_cfg()
 cfg.merge_from_file("my_config.yaml")
 
-train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
-test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
+# train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
+# test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
+test_dataset_path = "/home/ayb/Desktop/fotos"
 
-DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
+# DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
 DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
 
-MetadataCatalog.get("trafo_train").set(thing_classes=["trafo"])
+# MetadataCatalog.get("trafo_train").set(thing_classes=["trafo"])
 MetadataCatalog.get("trafo_test").set(thing_classes=["trafo"])
 
-cfg.DATASETS.TRAIN = ("trafo_train",)
+# cfg.DATASETS.TRAIN = ("trafo_train",)
 cfg.DATASETS.TEST = ("trafo_test",)
 
 # path to the model we just trained

@@ -23,8 +23,11 @@ cfg.merge_from_file(
     model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")
 )
 
-train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
-test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
+#train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
+# test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
+
+train_dataset_path = '/home/ayb/Documents/data/termal_img/train'
+test_dataset_path = '/home/ayb/Documents/data/termal_img/train'
 
 DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
 DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
@@ -35,17 +38,16 @@ MetadataCatalog.get("trafo_test").set(thing_classes=["trafo"])
 cfg.DATASETS.TRAIN = ("trafo_train",)
 cfg.DATASETS.TEST = ("trafo_test",)
 
+cfg.DATALOADER.FILTER_EMPTY_ANNOTATIONS = False
 
-try:
-    os.makedirs("dataset_vis", exist_ok=True)
-except:
-    print("Populating dataset_vis")
-    for n, d in enumerate(DatasetCatalog.get("trafo_train")):
-        im = cv2.imread(d["file_name"])
-        v = Visualizer(im, metadata=MetadataCatalog.get("trafo_train"), scale=0.5)
-        out = v.draw_dataset_dict(d)
-        cv2.imwrite(os.path.join("dataset_vis", str(n) + ".jpg"), out.get_image())
-        cv2.waitKey()
+
+print("Populating dataset_vis")
+for n, d in enumerate(DatasetCatalog.get("trafo_train")):
+    im = cv2.imread(d["file_name"])
+    v = Visualizer(im, metadata=MetadataCatalog.get("trafo_train"), scale=0.5)
+    out = v.draw_dataset_dict(d)
+    cv2.imwrite(os.path.join("dataset_vis", str(n) + ".jpg"), out.get_image())
+    cv2.waitKey()
 
 
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
@@ -55,7 +57,7 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
 cfg.DATALOADER.NUM_WORKERS = 2
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-cfg.SOLVER.MAX_ITER = 10000
+cfg.SOLVER.MAX_ITER = 100000
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
 
