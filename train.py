@@ -23,12 +23,11 @@ cfg.merge_from_file(
     model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")
 )
 
-#train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
-# test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
 
-train_dataset_path = '/home/ayb/Documents/data/termal_img/train'
-test_dataset_path = '/home/ayb/Documents/data/termal_img/train'
+train_dataset_path = 'data/termal_img/train'
+test_dataset_path = 'data/termal_img/train'
 
+#register datasets
 DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
 DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
 
@@ -41,6 +40,7 @@ cfg.DATASETS.TEST = ("trafo_test",)
 cfg.DATALOADER.FILTER_EMPTY_ANNOTATIONS = False
 
 
+#dataset visualization
 print("Populating dataset_vis")
 for n, d in enumerate(DatasetCatalog.get("trafo_train")):
     im = cv2.imread(d["file_name"])
@@ -50,10 +50,12 @@ for n, d in enumerate(DatasetCatalog.get("trafo_train")):
     cv2.waitKey()
 
 
+#load pretrained model weights
 cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
     "COCO-Detection/faster_rcnn_R_50_C4_1x.yaml"
 )
 
+#Faster RCNN config
 cfg.DATALOADER.NUM_WORKERS = 2
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR

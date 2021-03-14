@@ -21,9 +21,7 @@ setup_logger()
 cfg = get_cfg()
 cfg.merge_from_file("my_config.yaml")
 
-# train_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "train")
-# test_dataset_path = os.path.join(os.environ["DATA_PATH"], "trafo_img", "test")
-test_dataset_path = "/home/ayb/Desktop/fotos"
+test_dataset_path = "./data/termal/"
 
 # DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
 DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
@@ -34,7 +32,7 @@ MetadataCatalog.get("trafo_test").set(thing_classes=["trafo"])
 # cfg.DATASETS.TRAIN = ("trafo_train",)
 cfg.DATASETS.TEST = ("trafo_test",)
 
-# path to the model we just trained
+# path to the model ust trained
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.8
 predictor = DefaultPredictor(cfg)
@@ -51,7 +49,6 @@ for n, d in enumerate(DatasetCatalog.get("trafo_test")):
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
     cv2.imwrite(os.path.join(save_path, str(n) + ".jpg"), out.get_image())
 
-cv2
 evaluator = COCOEvaluator("trafo_test", cfg, distributed=False, output_dir="./output/")
 
 test_loader = build_detection_test_loader(cfg, "trafo_test")
