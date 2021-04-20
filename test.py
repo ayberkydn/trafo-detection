@@ -21,23 +21,21 @@ setup_logger()
 cfg = get_cfg()
 cfg.merge_from_file("my_config.yaml")
 
-test_dataset_path = "./data/termal/"
 
-# DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
+test_dataset_path = 'data/trafo_img/test'
+
 DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
 
-# MetadataCatalog.get("trafo_train").set(thing_classes=["trafo"])
 MetadataCatalog.get("trafo_test").set(thing_classes=["trafo"])
 
-# cfg.DATASETS.TRAIN = ("trafo_train",)
 cfg.DATASETS.TEST = ("trafo_test",)
 
 # path to the model ust trained
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.8
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2
 predictor = DefaultPredictor(cfg)
 
-save_path = "./sonuc_fotolar"
+save_path = "./test_results"
 os.makedirs(save_path, exist_ok=True)
 
 for n, d in enumerate(DatasetCatalog.get("trafo_test")):
