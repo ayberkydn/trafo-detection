@@ -23,8 +23,15 @@ cfg.merge_from_file(
     model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_C4_1x.yaml")
 )
 
+import argparse
+parser = argparse.ArgumentParser()
+   
+parser.add_argument('--train_dataset_path', type=str, required=True)
 
-train_dataset_path = 'data/trafo_img/train'
+args = parser.parse_args()
+
+
+train_dataset_path = args.train_dataset_path
 
 #register datasets
 DatasetCatalog.register("trafo_train", lambda: dataset_fn(train_dataset_path))
@@ -42,11 +49,11 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(
 )
 
 #Faster RCNN config
-cfg.DATALOADER.NUM_WORKERS = 2
-cfg.SOLVER.IMS_PER_BATCH = 2
-cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-cfg.SOLVER.MAX_ITER = 200
-cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 128
+cfg.DATALOADER.NUM_WORKERS = 1
+cfg.SOLVER.IMS_PER_BATCH = 1
+cfg.SOLVER.BASE_LR = 0.0025  # pick a good LR
+cfg.SOLVER.MAX_ITER = 2000
+cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32
 cfg.MODEL.ROI_HEADS.NUM_CLASSES = 1
 
 os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)

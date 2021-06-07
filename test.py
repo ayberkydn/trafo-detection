@@ -16,15 +16,21 @@ from dataset_fn import dataset_fn
 import detectron2
 from detectron2.utils.logger import setup_logger
 
+import argparse
+parser = argparse.ArgumentParser()
+   
+parser.add_argument('--test_dataset_path', type=str)
+parser.add_argument('--results_save_path', type=str)
+
+args = parser.parse_args()
+
+
 setup_logger()
 
 cfg = get_cfg()
 cfg.merge_from_file("my_config.yaml")
 
-
-test_dataset_path = 'data/trafo_img/test'
-
-DatasetCatalog.register("trafo_test", lambda: dataset_fn(test_dataset_path))
+DatasetCatalog.register("trafo_test", lambda: dataset_fn(args.test_dataset_path))
 
 MetadataCatalog.get("trafo_test").set(thing_classes=["trafo"])
 
@@ -35,7 +41,7 @@ cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2
 predictor = DefaultPredictor(cfg)
 
-save_path = "./test_results"
+save_path = args.results_save_path
 os.makedirs(save_path, exist_ok=True)
 
 for n, d in enumerate(DatasetCatalog.get("trafo_test")):
