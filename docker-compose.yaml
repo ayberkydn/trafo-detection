@@ -1,7 +1,0 @@
-version: "3"
-services:
-  main:
-    image: "ayberkydn/detectron2"
-    working_dir: ${PWD}
-    volumes: 
-      - ~:/home/ayb
