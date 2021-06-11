@@ -38,7 +38,7 @@ cfg.DATASETS.TEST = ("trafo_test",)
 
 # path to the model ust trained
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.9
 predictor = DefaultPredictor(cfg)
 
 save_path = args.results_save_path
